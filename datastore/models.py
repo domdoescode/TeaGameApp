@@ -1,16 +1,8 @@
 from django.db import models
 
 
-# Create your models here.
-class Player(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    drink_preference = models.OneToOneField(
-        DrinkRequirements,
-    )
-
-
 class DrinkRequirements(models.Model):
-    mug_clean = models.BooleanField(default=False)
+    mug_clean = models.BooleanField()
 
     drink_choices = (
         ("Tea", 'tea'),
@@ -23,8 +15,16 @@ class DrinkRequirements(models.Model):
         default='NA',
     )
 
-    milk = models.BooleanField(deafult=True)
+    milk = models.BooleanField()
     sugar = models.IntegerField(default=0)
+
+
+# Create your models here.
+class Player(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    drink_preference = models.OneToOneField(
+        DrinkRequirements,
+    )
 
 
 class Round(models.Model):
