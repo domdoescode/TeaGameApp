@@ -2,24 +2,76 @@ from django.http import HttpResponse
 from django.template import loader
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
 from cards.cards import Cards
- 
+from datastore.models import Round, Player, DrinkRequirements
+from cards.forms.player import PlayerForm
 
-def index(request):
+
+def play_game(request):
     cards = Cards()
-    template = loader.get_template('cards/index.html')
-    raw_players = request.GET.get('players')
+    template = loader.get_template('cards/playgame.html')
+    players = get_players(request.GET.get('players'))
 
-    players = get_players(raw_players)
     player_cards = cards.get_cards_for_players(players)
-    raw_winner = cards.get_winner(player_cards)
-    winner = raw_winner[0]
+    loser = cards.get_loser(player_cards)[0]
 
-    return HttpResponse(template.render({"player_cards": player_cards, "winner": winner}, request, ))
+    save_round(loser)
+
+    return HttpResponse(template.render(
+        {"player_cards": player_cards, "loser": loser},
+        request, ))
+
+
+def save_round(loser):
+    round = Round()
+    round.loser = loser
+    round.save()
 
 
 def get_players(players):
-    return players.split(",")
+    if players:
+        return players.split(",")
+    return ["unknown"]
+
+
+def register_players(request):
+    template = loader.get_template('cards/registerplayers.html')
+
+    if request.method == 'POST':
+        form = PlayerForm(request.POST)
+        if form.is_valid():
+            save_drink_and_player(form)
+
+            return HttpResponse(template.render(
+                {"form": form, "name": form.cleaned_data['name']},
+                request,))
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = PlayerForm()
+
+    return HttpResponse(template.render(
+        {"form": form},
+        request,))
+
+
+def save_drink_and_player(form):
+    name = form.cleaned_data['name']
+    drink_type = form.cleaned_data['drink_type']
+    milk = form.cleaned_data["milk"]
+    sugar = form.cleaned_data['sugar']
+
+    drink = DrinkRequirements()
+    drink.drink_type = drink_type
+    drink.milk = milk
+    drink.sugar = sugar
+    drink.save()
+
+    player = Player()
+    player.name = name
+    player.drink_preference = drink
+    player.save()
 
 
 class GetCards(APIView):

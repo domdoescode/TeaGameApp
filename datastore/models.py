@@ -2,7 +2,6 @@ from django.db import models
 
 
 class DrinkRequirements(models.Model):
-    mug_clean = models.BooleanField()
 
     drink_choices = (
         ("Tea", 'tea'),
@@ -31,12 +30,14 @@ class Round(models.Model):
 
     date = models.DateTimeField(auto_now_add=True)
 
-    players = models.ForeignKey(
-        Player,
-        related_name="round_players",
-    )
+    # players = models.ForeignKey(
+    #     Player,
+    #     related_name="round_players",
+    # )
 
-    loser = models.OneToOneField(
-        Player,
-        related_name="round_loser",
-    )
+    # loser = models.OneToOneField(
+    #     Player,
+    #     related_name="round_loser",
+    # )
+
+    loser = models.CharField(max_length=100)

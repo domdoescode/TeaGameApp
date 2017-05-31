@@ -1,7 +1,6 @@
 __author__ = "MissMaximas"
 
 import random
-from collections import OrderedDict
 
 
 class Cards:
@@ -44,3 +43,7 @@ class Cards:
     def get_winner(self, player_cards):
         sp = self.sorted_players(player_cards)
         return sp[len(sp)-1]
+
+    def get_loser(self, player_cards):
+        sp = self.sorted_players(player_cards)
+        return sp[0]

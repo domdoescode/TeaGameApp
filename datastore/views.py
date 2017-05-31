@@ -3,8 +3,8 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import generics
 
-from .models import Player, Round
-from .serializers import PlayerSerializer, RoundSerializer
+from .models import Player, Round, DrinkRequirements
+from .serializers import PlayerSerializer, RoundSerializer, DrinkSerialiser
 
 
 class PlayerList(generics.ListCreateAPIView):
@@ -21,3 +21,11 @@ class RoundList(generics.ListCreateAPIView):
     """
     queryset = Round.objects.all()
     serializer_class = RoundSerializer
+
+
+class DrinkList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing and creating Book objects
+    """
+    queryset = DrinkRequirements.objects.all()
+    serializer_class = DrinkSerialiser

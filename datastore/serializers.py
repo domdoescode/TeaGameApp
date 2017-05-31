@@ -2,16 +2,22 @@ __author__ = "MissMaximas"
 
 from rest_framework import serializers
 
-from .models import Player, Round
+from .models import Player, Round, DrinkRequirements
 
 
 class RoundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Round
-        fields = ('date', 'players', 'loser')
+        fields = ('id', 'date', 'loser')
 
 
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ('name', 'drink_preference')
+        fields = ('id', 'name', 'drink_preference')
+
+
+class DrinkSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = DrinkRequirements
+        fields = ('id', 'drink_type', 'milk', 'sugar')
