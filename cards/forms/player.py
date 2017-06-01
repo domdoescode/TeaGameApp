@@ -5,8 +5,8 @@ class PlayerForm(forms.Form):
 
     name = forms.CharField(label='Player Name', max_length=100)
     drink_type = forms.ChoiceField(choices=(
-        ("Tea", 'tea'),
-        ("Coffee", 'coffee'),
+        ("tea", 'Tea'),
+        ("coffee", 'Coffee'),
     ))
     milk = forms.BooleanField(label="Milk?")
     sugar = forms.IntegerField(label="Sugars?")

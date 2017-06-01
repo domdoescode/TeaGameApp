@@ -2,19 +2,56 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Hello React</title>
+        <style>
+            body {
+                background-color: #a2adb4;
+                font-family: Verdana;
+            }
+
+            h1 {
+                color: #2179ae;
+                margin-left: 40px;
+            }
+            .loserdiv {
+                color: yellow;
+                margin: 5px;
+                float: top;
+                text-align: center;
+            }
+            .resultsdiv {
+                color: black;
+                margin-left: 100px;
+                margin-right: 100px;
+                text-align: center;
+                float: left;
+
+            }
+        </style>
     </head>
     <body>
-           <h1> Loser: {{loser}}</h1> <br /><br />
-    <table>
+    <div class="loserdiv">
+       <h1> Loser: {{loser}}</h1> <br /><br />
+    </div>
+    <div class="resultsdiv">
+        <table>
 
-        {% for player, card in player_cards.items %}
-        <tr> <td><b>{{player}}</b></td></tr>
-        <tr> <td>{{card.card}} of {{ card.suit}}<br /><br /></td></tr>
-       {% endfor %}
-
-    </table>
-        <div id="container"></div>
-        {% render_bundle 'main' %}
+            {% for player, card in player_cards.items %}
+            <tr>
+                <td>
+                    <b>{{player}}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{card.card}} of {{ card.suit}}<br /><br />
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <!--{% load static %} <img src="{% static "teagame_logo.png" %}" alt="Hi!" />-->
+        <!--<img src="/static/teagame_logo.png" alt="Tea Game">-->
+    </div>
+        <!--<div id="container"></div>-->
+        <!--{% render_bundle 'main' %}-->
     </body>
 </html>

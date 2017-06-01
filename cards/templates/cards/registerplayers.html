@@ -1,18 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register Players</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+            <style>
+                body {
+                    background-color: #a2adb4;
+                    font-family: Verdana;
+                }
+
+                h1 {
+                    color: #2179ae;
+                    margin-left: 40px;
+                }
+                .form {
+                    background-color: white;
+                    text-align: center;
+                    padding-left: 100px;
+                    padding-right: 100px;
+                }
+                .padding {
+                    background-color: #a2adb4;
+                    width: 300px;
+                    border: 25px;
+                    padding: 25px;
+                    margin: 25px;
+                }
+                .left {
+                    background-color: #a2adb4;
+                    width: 400px;
+                    border: 25px;
+                    padding: 25px;
+                    margin: 25px;
+                    float: left;
+                }
+
+            </style>
+        <title>Register Players</title>
+    </head>
 <body>
-{% if name != None %}
-Registered: {{ name }} ! <br />
-{% endif %}
-<form action="/cards/register-players/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
-</form>
+    {% if name != None %}
+    Registered: {{ name }} ! <br />
+    {% endif %}
+    <div class="left"></div>
+    <div class="padding">
+        <div class="form">
+            <form action="/cards/register-players/" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+    </div>
+
 
 </body>
 </html>

@@ -74,6 +74,21 @@ def save_drink_and_player(form):
     player.save()
 
 
+def player_list(request):
+    # player = Player()
+    template = loader.get_template('cards/playerlist.html')
+
+    available_players = []
+    players = Player.objects.all()
+    for player in players:
+        available_players.append(player.name)
+
+    return HttpResponse(
+        template.render(
+            {"players": available_players
+             }, request, ))
+
+
 class GetCards(APIView):
 
   def get(self, request, format=None):
