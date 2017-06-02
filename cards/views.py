@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template import loader
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from datetime import datetime
 
 from cards.cards import Cards
 from datastore.models import Round, Player, DrinkRequirements
@@ -67,7 +68,7 @@ def save_player_to_session(request, player):
     :param player: String
     :return:
     """
-    sessionlist = request.session['players']
+    sessionlist = request.session.get('players', [])
     sessionlist.append(player)
     request.session['players'] = sessionlist
 
@@ -96,6 +97,7 @@ def save_drink_and_player(form):
 
 
 def player_list(request):
+    set_session_expiry(request)
     template = loader.get_template('cards/playerlist.html')
     render_data = {
         "in_game": [],
@@ -104,12 +106,10 @@ def player_list(request):
 
     if request.method == "POST":
         # Adds player to session (To register for game)
-        # TODO: Work out appropriate way to clear the session
-        # Not sure if I should set an expiry, or clear after the
-        # game is played.
-        remove_player = request.POST["player_name"]
-        save_player_to_session(request, remove_player)
+        save_player_to_session(request, request.POST["player_name"])
         render_data["in_game"] = request.session['players']
+    else:
+        render_data["in_game"] = request.session.get('players', [])
 
     players = Player.objects.all()
 
@@ -120,12 +120,16 @@ def player_list(request):
 
     # Removes players already playing
     for playing in render_data["in_game"]:
-        if playing in render_data["in_game"]:
+        if playing in render_data["players"]:
             render_data["players"].remove(playing)
 
     return HttpResponse(
         template.render(
             render_data, request,))
+
+
+def set_session_expiry(request):
+    request.session.set_expiry(5)
 
 
 class GetCards(APIView):

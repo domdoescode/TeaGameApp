@@ -35,21 +35,50 @@
                     padding: 25px;
                     margin: 25px;
                 }
+             .playgame{
+                float: right;
+                width: 300px;
+                border: 25px;
+                padding: 25px;
+                margin: 25px;
+             }
+            .gobutton {
+                background-color: #01DFA5; /* gobutton */
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border-radius: 12px;
+            }
+            .gobutton:hover {
+                background-color: white;
+                color: black;
+                border: 2px solid #9774cc;
+            }
         </style>
     <title>Player List</title>
 </head>
 <body>
+    <div class="playgame">
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" class="button" value="Go Play!" name="go">
+        </form>
+        Players:
+            {% for player in in_game %}
+                 {{player}} <br />
+            {% endfor %}
+    </div>
     <div class="padding">
         {% for player in players %}
         <form method="post">
             {% csrf_token %}
-            <input type="submit" class="button" value="{{ player }}" name="player_name">
+            <input type="submit" class="gobutton" value="{{ player }}" name="player_name">
         </form>
-            <!--<div class="button">-->
-                <!--{{ player }}-->
-            <!--</div>-->
         {% endfor %}
     </div>
-
 </body>
 </html>
