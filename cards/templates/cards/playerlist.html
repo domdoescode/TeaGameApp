@@ -41,9 +41,13 @@
 <body>
     <div class="padding">
         {% for player in players %}
-            <div class="button">
-                {{ player }}
-            </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" class="button" value="{{ player }}" name="player_name">
+        </form>
+            <!--<div class="button">-->
+                <!--{{ player }}-->
+            <!--</div>-->
         {% endfor %}
     </div>
 

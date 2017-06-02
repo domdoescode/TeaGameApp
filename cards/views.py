@@ -56,7 +56,28 @@ def register_players(request):
         request,))
 
 
+def save_player_to_session(request, player):
+    """ Save a player name to the session
+
+    The session is used within the request object,
+    saving the player here means it can be accessed by other
+    views.
+
+    :param request: request
+    :param player: String
+    :return:
+    """
+    sessionlist = request.session['players']
+    sessionlist.append(player)
+    request.session['players'] = sessionlist
+
+
 def save_drink_and_player(form):
+    """ Cleans form data and saves to DB
+
+    :param form: form
+    :return:
+    """
     name = form.cleaned_data['name']
     drink_type = form.cleaned_data['drink_type']
     milk = form.cleaned_data["milk"]
@@ -75,18 +96,36 @@ def save_drink_and_player(form):
 
 
 def player_list(request):
-    # player = Player()
     template = loader.get_template('cards/playerlist.html')
+    render_data = {
+        "in_game": [],
+        "players": [],
+    }
 
-    available_players = []
+    if request.method == "POST":
+        # Adds player to session (To register for game)
+        # TODO: Work out appropriate way to clear the session
+        # Not sure if I should set an expiry, or clear after the
+        # game is played.
+        remove_player = request.POST["player_name"]
+        save_player_to_session(request, remove_player)
+        render_data["in_game"] = request.session['players']
+
     players = Player.objects.all()
+
+    # Could probably refactor all below.
+    # Adds all players to the list
     for player in players:
-        available_players.append(player.name)
+        render_data["players"].append(player.name)
+
+    # Removes players already playing
+    for playing in render_data["in_game"]:
+        if playing in render_data["in_game"]:
+            render_data["players"].remove(playing)
 
     return HttpResponse(
         template.render(
-            {"players": available_players
-             }, request, ))
+            render_data, request,))
 
 
 class GetCards(APIView):
