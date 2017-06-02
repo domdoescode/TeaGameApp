@@ -34,7 +34,14 @@
                     border: 25px;
                     padding: 25px;
                     margin: 25px;
-                }
+            }
+            .buttonpadding {
+                    background-color: #a2adb4;
+                    width: 100px;
+                    border: 5px;
+                    padding: 5px;
+                    margin: 5x;
+            }
              .playgame{
                 float: right;
                 width: 300px;
@@ -74,10 +81,12 @@
     </div>
     <div class="padding">
         {% for player in players %}
+        <div class="buttonpadding">
         <form method="post">
             {% csrf_token %}
             <input type="submit" class="gobutton" value="{{ player }}" name="player_name">
         </form>
+        </div>
         {% endfor %}
     </div>
 </body>

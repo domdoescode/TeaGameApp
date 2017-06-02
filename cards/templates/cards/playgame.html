@@ -48,6 +48,16 @@
             </tr>
             {% endfor %}
         </table>
+        <h3>Drink Requirements</h3>
+        <table>
+            {% for player, drinks in player_drinks.items %}
+            <tr>
+                <td>
+                    <b>{{player}}</b>: {{drinks.drink}} with {{drinks.sugar}} sugar(s), and {{drinks.milk}} milk.<br /><br />
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
         <!--{% load static %} <img src="{% static "teagame_logo.png" %}" alt="Hi!" />-->
         <!--<img src="/static/teagame_logo.png" alt="Tea Game">-->
     </div>

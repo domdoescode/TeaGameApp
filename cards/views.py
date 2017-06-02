@@ -2,32 +2,31 @@ from django.http import HttpResponse
 from django.template import loader
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from datetime import datetime
+from django.shortcuts import redirect
 
 from cards.cards import Cards
-from datastore.models import Round, Player, DrinkRequirements
 from cards.forms.player import PlayerForm
+from cards.drinks import Drinks
+from cards.db_utils import DBUtils
 
 
 def play_game(request):
     cards = Cards()
+    drinks = Drinks()
+    players = request.session.get('players', [])
     template = loader.get_template('cards/playgame.html')
-    players = get_players(request.GET.get('players'))
 
     player_cards = cards.get_cards_for_players(players)
     loser = cards.get_loser(player_cards)[0]
+    player_drinks = {}
+    for player in players:
+        player_drinks[player] = drinks.get_player_drink(player)
 
-    save_round(loser)
+    DBUtils().save_round(loser)
 
     return HttpResponse(template.render(
-        {"player_cards": player_cards, "loser": loser},
+        {"player_cards": player_cards, "loser": loser, "player_drinks": player_drinks},
         request, ))
-
-
-def save_round(loser):
-    round = Round()
-    round.loser = loser
-    round.save()
 
 
 def get_players(players):
@@ -42,7 +41,7 @@ def register_players(request):
     if request.method == 'POST':
         form = PlayerForm(request.POST)
         if form.is_valid():
-            save_drink_and_player(form)
+            DBUtils().save_drink_and_player(form)
 
             return HttpResponse(template.render(
                 {"form": form, "name": form.cleaned_data['name']},
@@ -73,29 +72,6 @@ def save_player_to_session(request, player):
     request.session['players'] = sessionlist
 
 
-def save_drink_and_player(form):
-    """ Cleans form data and saves to DB
-
-    :param form: form
-    :return:
-    """
-    name = form.cleaned_data['name']
-    drink_type = form.cleaned_data['drink_type']
-    milk = form.cleaned_data["milk"]
-    sugar = form.cleaned_data['sugar']
-
-    drink = DrinkRequirements()
-    drink.drink_type = drink_type
-    drink.milk = milk
-    drink.sugar = sugar
-    drink.save()
-
-    player = Player()
-    player.name = name
-    player.drink_preference = drink
-    player.save()
-
-
 def player_list(request):
     set_session_expiry(request)
     template = loader.get_template('cards/playerlist.html')
@@ -105,13 +81,15 @@ def player_list(request):
     }
 
     if request.method == "POST":
+        if request.POST.get("go"):
+            return redirect("play")
         # Adds player to session (To register for game)
         save_player_to_session(request, request.POST["player_name"])
         render_data["in_game"] = request.session['players']
     else:
         render_data["in_game"] = request.session.get('players', [])
 
-    players = Player.objects.all()
+    players = DBUtils().get_all_players()
 
     # Could probably refactor all below.
     # Adds all players to the list
